@@ -23,6 +23,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\ForceJsonResponse::class,
         \App\Http\Middleware\Cors::class,
+        \App\Http\Middleware\UseApiGuard::class,
     ];
 
     /**
@@ -43,6 +44,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             'throttle:60,1',
+            'useapiguard',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -69,5 +71,6 @@ class Kernel extends HttpKernel
         'cors' => \App\Http\Middleware\Cors::class,
         'api.admin' => \App\Http\Middleware\AdminAuth::class,
         'api.superAdmin' => \App\Http\Middleware\SuperAdminAuth::class,
+        'useapiguard' => \App\Http\Middleware\UseApiGuard::class,
     ];
 }

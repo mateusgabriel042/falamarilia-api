@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,18 +14,48 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['middleware' => ['cors', 'json.response']], function () {
+$router = app(Router::class);
 
-    // Public Routes
-    Route::post('/login', 'Auth\ApiAuthController@login')->name('login.api');
-    Route::post('/register', 'Auth\ApiAuthController@register')->name('register.api');
-    Route::post('/logout', 'Auth\ApiAuthController@logout')->name('logout.api');
+$router
+    ->prefix('/')
+    ->middleware(['cors', 'json.response', 'useapiguard'])
+    ->group(function () use ($router) {
 
-    // Protected Routes
-    Route::middleware('auth:api', 'api.superAdmin')->group(function () {
+        // Public Routes
+        $router
+            ->prefix('auth')
+            ->name('auth.')
+            ->group(function () use ($router) {
+                $router->post('/login', 'Auth\ApiAuthController@login')->name('login');
+                $router->post('/register', 'Auth\ApiAuthController@register')->name('register');
+                $router->post('/logout', 'Auth\ApiAuthController@logout')->name('logout');
+            });
 
-        Route::get('/user', function (Request $request) {
-            return $request->user();
-        });
+        // Protected Routes
+        $router
+            ->middleware(['auth:api', 'api.superAdmin'])
+            ->group(function () use ($router) {
+
+
+                // Profile Controller
+                $router
+                    ->namespace('User')
+                    ->prefix('profile')
+                    ->name('profile.')
+                    ->group(function () use ($router) {
+                        // $router->user();
+                        $router->get('/', 'ProfilesController@get')->name('index');
+                        $router->put('/', 'ProfilesController@update')->name('update');
+                    });
+
+                // Reset Password
+                $router
+                    ->namespace('Auth')
+                    ->prefix('password')
+                    ->name('password.')
+                    ->group(function () use ($router) {
+                        $router->post('/send', 'ResetPasswordController@sendPasswordByEmail')->name('send');
+                        $router->post('/forgot', 'ResetPasswordController@resetPassword')->name('forgot');
+                    });
+            });
     });
-});

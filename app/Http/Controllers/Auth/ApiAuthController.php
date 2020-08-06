@@ -7,60 +7,77 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use App\Models\Profile;
+use App\Validators\LoginValidator;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Validators\ProfileValidator;
+use Illuminate\Http\JsonResponse;
 
 class ApiAuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'type' => 'integer',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            ProfileValidator::NEW_PACKAGE_RULE,
+            ProfileValidator::ERROR_MESSAGES
+        );
+
         if ($validator->fails()) {
-            return response(['errors' => $validator->errors()->all()], 422);
+            return response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        $request['password'] = Hash::make($request['password']);
-        $request['remember_token'] = Str::random(10);
-        $user = User::create($request->toArray());
-        $request['type'] = $request['type'] ? $request['type']  : 0;
+
+        $user = new User;
+        $user->password = Hash::make($request->get('password'));
+        $user->remember_token = Str::random(10);
+        $user->type = $request->get('type') ? $request->get('type') : 1;
+
+        if ($user->save()) {
+            $profile = new Profile;
+            $profile->user_id = $user->id;
+            $profile->genre = $request->get('genre') ? $request->get('genre') : 'others';
+            $profile->phone = $request->get('phone');
+            $profile->cpf = $request->get('cpf');
+            $profile->save();
+        }
+
         $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-        $response = ['token' => $token];
-        return response($response, 200);
+
+        return response()->json(['token' => $token], Response::HTTP_OK);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            LoginValidator::NEW_PACKAGE_RULE,
+            LoginValidator::ERROR_MESSAGES
+        );
+
         if ($validator->fails()) {
-            return response(['errors' => $validator->errors()->all()], 422);
+            return response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        $user = User::where('email', $request->email)->first();
+
+        $user = User::where('email', $request->get('email'))->first();
         if ($user) {
-            if (Hash::check($request->password, $user->password)) {
+            if (Hash::check($request->get('password'), $user->password)) {
                 $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-                $response = ['token' => $token];
-                return response($response, 200);
+
+                return response()->json(['token' => $token], Response::HTTP_OK);
             } else {
-                $response = ["message" => "Password mismatch"];
-                return response($response, 422);
+
+                return response()->json(["message" => "Senha incorreta."], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         } else {
-            $response = ["message" => 'User does not exist'];
-            return response($response, 422);
+            return response()->json(["message" => "Usuário não existe."], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         $token = $request->user()->token();
         $token->revoke();
-        $response = ['message' => 'You have been successfully logged out!'];
-        return response($response, 200);
+        return response()->json(['message' => 'Você foi desconectado com sucesso!'], Response::HTTP_OK);
     }
 }
