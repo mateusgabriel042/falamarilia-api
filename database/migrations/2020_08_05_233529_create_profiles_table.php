@@ -20,7 +20,6 @@ class CreateProfilesTable extends Migration
             $table->enum('genre', ['male', 'female', 'others'])->default('others');
             $table->string('cpf')->unique()->nullable(false);
             $table->string('phone')->nullable(false);
-            $table->softDeletes();
             $table->timestamps();
         });
     }

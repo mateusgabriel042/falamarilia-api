@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Service extends Model
@@ -24,5 +23,10 @@ class Service extends Model
     public function category(): HasMany
     {
         return $this->hasMany(Category::class);
+    }
+
+    public function solicitation(): HasMany
+    {
+        return $this->hasMany(Solicitation::class);
     }
 }

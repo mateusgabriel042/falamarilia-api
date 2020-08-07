@@ -33,7 +33,7 @@ $router
 
         // Protected Routes
         $router
-            ->middleware(['auth:api', 'api.superAdmin'])
+            ->middleware(['auth:api'])
             ->group(function () use ($router) {
 
 
@@ -54,13 +54,34 @@ $router
                     ->name('service.')
                     ->group(function () use ($router) {
                         $router->get('/', 'ServicesController@getAll')->name('all');
-                        $router->post('/', 'ServicesController@store')->name('store');
+                        $router->post('/', 'ServicesController@store')
+                            ->middleware('api.superAdmin')->name('store');
                         $router->get('/{id}', 'ServicesController@get')->name('index');
-                        $router->put('/{id}', 'ServicesController@update')->name('update');
-                        $router->delete('/{id}', 'ServicesController@destroy')->name('destroy');
-                        $router->post('/category', 'ServicesController@storeCategory')->name('store.category');
-                        $router->put('{id}/category/{category_id}', 'ServicesController@updateCategory')->name('update.category');
-                        $router->delete('{id}/category/{category_id}', 'ServicesController@destroyCategory')->name('destroy.category');
+                        $router->put('/{id}', 'ServicesController@update')
+                            ->middleware('api.superAdmin')->name('update');
+                        $router->delete('/{id}', 'ServicesController@destroy')
+                            ->middleware('api.superAdmin')->name('destroy');
+                        $router->post('/category', 'ServicesController@storeCategory')
+                            ->middleware('api.superAdmin')->name('store.category');
+                        $router->put('{id}/category/{category_id}', 'ServicesController@updateCategory')
+                            ->middleware('api.superAdmin')->name('update.category');
+                        $router->delete('{id}/category/{category_id}', 'ServicesController@destroyCategory')
+                            ->middleware('api.superAdmin')->name('destroy.category');
+                    });
+
+                // Solicitations Routes
+                $router
+                    ->namespace('Solicitation')
+                    ->prefix('solicitation')
+                    ->name('solicitation.')
+                    ->group(function () use ($router) {
+                        $router->get('/', 'SolicitationsController@getAll')
+                            ->middleware('api.superAdmin')->name('all');
+                        $router->get('/user', 'SolicitationsController@getAllUser')->name('allUser');
+                        $router->get('/{id}', 'SolicitationsController@get')->name('index');
+                        $router->post('/', 'SolicitationsController@store')->name('store');
+                        $router->put('/{id}', 'SolicitationsController@update')
+                            ->middleware('api.superAdmin')->name('update');
                     });
 
                 // Categories Routes
@@ -71,9 +92,12 @@ $router
                     ->group(function () use ($router) {
                         $router->get('/', 'CategoryController@getAll')->name('all');
                         $router->get('/{id}', 'CategoryController@get')->name('index');
-                        $router->put('/{id}', 'CategoryController@update')->name('update');
-                        $router->post('/', 'CategoryController@store')->name('store');
-                        $router->delete('/{id}', 'CategoryController@destroy')->name('destroy');
+                        $router->put('/{id}', 'CategoryController@update')
+                            ->middleware('api.superAdmin')->name('update');
+                        $router->post('/', 'CategoryController@store')
+                            ->middleware('api.superAdmin')->name('store');
+                        $router->delete('/{id}', 'CategoryController@destroy')
+                            ->middleware('api.superAdmin')->name('destroy');
                     });
 
                 // Reset Password Routes

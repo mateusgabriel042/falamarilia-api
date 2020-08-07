@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Services;
 
-use App\Models\category;
+use App\Models\Category;
 use App\Models\Service;
 use App\Repositories\Services\ServicesRepositoryInterface;
 use Illuminate\Http\Request;

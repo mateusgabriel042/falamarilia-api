@@ -21,7 +21,6 @@ class CreateCategoriesTable extends Migration
             $table->foreignId('service_id')
                 ->constrained('services')
                 ->cascadeOnDelete();
-            $table->softDeletes();
             $table->timestamps();
         });
     }

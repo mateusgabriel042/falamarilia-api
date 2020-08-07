@@ -19,7 +19,6 @@ class CreateServicesTable extends Migration
             $table->string('color')->nullable(false)->default('#eb5657');
             $table->string('icon')->nullable(false);
             $table->boolean('active')->default(true);
-            $table->softDeletes();
             $table->timestamps();
         });
     }

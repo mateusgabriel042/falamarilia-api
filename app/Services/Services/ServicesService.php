@@ -8,7 +8,6 @@ use App\Validators\ServiceValidator;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
 
