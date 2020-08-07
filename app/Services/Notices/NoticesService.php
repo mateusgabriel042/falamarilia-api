@@ -1,51 +1,33 @@
 <?php
 
-namespace App\Services\Solicitations;
+namespace App\Services\Notices;
 
-use App\Repositories\Solicitations\SolicitationsRepositoryInterface;
-use App\Validators\SolicitationValidator;
+use App\Repositories\Notices\NoticesRepositoryInterface;
+use App\Validators\NoticeValidator;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
 
-class SolicitationsService
+class NoticesService
 {
 
-    private $solicitationsRepository;
+    private $noticesRepository;
 
-    public function __construct(SolicitationsRepositoryInterface $solicitationsRepository)
+    public function __construct(NoticesRepositoryInterface $noticesRepository)
     {
-        $this->solicitationsRepository = $solicitationsRepository;
+        $this->noticesRepository = $noticesRepository;
     }
 
     public function getAll()
     {
         try {
-            $solicitations = $this->solicitationsRepository->getAll();
-            $countItems = (count($solicitations) > 0) ? true : false;
+            $notices = $this->noticesRepository->getAll();
+            $countItems = (count($notices) > 0) ? true : false;
 
             if ($countItems) {
-                return response()->json($solicitations, Response::HTTP_OK);
-            } else {
-                return response()->json([], Response::HTTP_OK);
-            }
-        } catch (Exception $e) {
-            return response()->json(['erro' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (Throwable $t) {
-            return response()->json(['erro' => $t->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public function getAllUser()
-    {
-        try {
-            $solicitations = $this->solicitationsRepository->getAllUser();
-            $countItems = (count($solicitations) > 0) ? true : false;
-
-            if ($countItems) {
-                return response()->json($solicitations, Response::HTTP_OK);
+                return response()->json($notices, Response::HTTP_OK);
             } else {
                 return response()->json([], Response::HTTP_OK);
             }
@@ -59,11 +41,11 @@ class SolicitationsService
     public function get(int $id)
     {
         try {
-            $solicitation = $this->solicitationsRepository->get($id);
-            $countItems = (count($solicitation) > 0) ? true : false;
+            $notice = $this->noticesRepository->get($id);
+            $countItems = (count($notice) > 0) ? true : false;
 
             if ($countItems) {
-                return response()->json($solicitation, Response::HTTP_OK);
+                return response()->json($notice, Response::HTTP_OK);
             } else {
                 return response()->json(null, Response::HTTP_NOT_FOUND);
             }
@@ -78,16 +60,16 @@ class SolicitationsService
     {
         $validator = Validator::make(
             $request->all(),
-            SolicitationValidator::NEW_PACKAGE_RULE,
-            SolicitationValidator::ERROR_MESSAGES
+            NoticeValidator::NEW_PACKAGE_RULE,
+            NoticeValidator::ERROR_MESSAGES
         );
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
         } else {
             try {
-                $solicitation = $this->solicitationsRepository->store($request);
-                return response()->json($solicitation, Response::HTTP_CREATED);
+                $notice = $this->noticesRepository->store($request);
+                return response()->json($notice, Response::HTTP_CREATED);
             } catch (Exception $e) {
                 return response()->json(['erro' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
             } catch (Throwable $t) {
@@ -98,9 +80,31 @@ class SolicitationsService
 
     public function update(int $id, Request $request)
     {
+        $validator = Validator::make(
+            $request->all(),
+            NoticeValidator::NEW_PACKAGE_RULE,
+            NoticeValidator::ERROR_MESSAGES
+        );
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
+        }
+
         try {
-            $solicitation = $this->solicitationsRepository->update($id, $request);
-            return response()->json(['message' => 'Solicitação atualizada com sucesso!'], Response::HTTP_OK);
+            $notice = $this->noticesRepository->update($id, $request);
+            return response()->json(['message' => 'Notícia atualizada com sucesso!'], Response::HTTP_OK);
+        } catch (Exception $e) {
+            return response()->json(['erro' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (Throwable $t) {
+            return response()->json(['erro' => $t->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function destroy(int $id)
+    {
+        try {
+            $notice = $this->noticesRepository->destroy($id);
+            return response()->json(['message' => 'Notícia removida com sucesso!'], Response::HTTP_OK);
         } catch (Exception $e) {
             return response()->json(['erro' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch (Throwable $t) {

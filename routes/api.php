@@ -21,6 +21,14 @@ $router
     ->middleware(['cors', 'json.response', 'useapiguard'])
     ->group(function () use ($router) {
 
+        $router->get('/', function () use ($router) {
+            return response()->json([
+                'name' => config('app.name'),
+                'version' => config('app.version'),
+                'locale' => app()->getLocale()
+            ]);
+        });
+
         // Public Routes
         $router
             ->prefix('auth')
@@ -84,19 +92,19 @@ $router
                             ->middleware('api.superAdmin')->name('update');
                     });
 
-                // Categories Routes
+                // Notices Routes
                 $router
-                    ->namespace('Categories')
-                    ->prefix('category')
-                    ->name('category.')
+                    ->namespace('Notice')
+                    ->prefix('notice')
+                    ->name('notice.')
                     ->group(function () use ($router) {
-                        $router->get('/', 'CategoryController@getAll')->name('all');
-                        $router->get('/{id}', 'CategoryController@get')->name('index');
-                        $router->put('/{id}', 'CategoryController@update')
+                        $router->get('/', 'NoticesController@getAll')->name('all');
+                        $router->get('/{id}', 'NoticesController@get')->name('index');
+                        $router->put('/{id}', 'NoticesController@update')
                             ->middleware('api.superAdmin')->name('update');
-                        $router->post('/', 'CategoryController@store')
+                        $router->post('/', 'NoticesController@store')
                             ->middleware('api.superAdmin')->name('store');
-                        $router->delete('/{id}', 'CategoryController@destroy')
+                        $router->delete('/{id}', 'NoticesController@destroy')
                             ->middleware('api.superAdmin')->name('destroy');
                     });
 

@@ -32,6 +32,12 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Solicitations\SolicitationsRepositoryInterface::class,
             \App\Repositories\Solicitations\SolicitationsRepositoryEloquent::class,
         );
+
+        // Binding Notice
+        $this->app->bind(
+            \App\Repositories\Notices\NoticesRepositoryInterface::class,
+            \App\Repositories\Notices\NoticesRepositoryEloquent::class,
+        );
     }
 
     /**

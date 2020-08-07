@@ -64,7 +64,6 @@ class ServicesRepositoryEloquent implements ServicesRepositoryInterface
 
     public function destroyCategory(int $id, int $category_id)
     {
-        // dd($category_id);
         $category = Category::where('id', $category_id)
             ->where('service_id', $id)
             ->first();
