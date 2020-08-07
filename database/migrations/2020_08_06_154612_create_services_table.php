@@ -15,6 +15,11 @@ class CreateServicesTable extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable(false);
+            $table->string('color')->nullable(false)->default('#eb5657');
+            $table->string('icon')->nullable(false);
+            $table->boolean('active')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

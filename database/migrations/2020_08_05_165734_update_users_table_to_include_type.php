@@ -15,6 +15,7 @@ class UpdateUsersTableToIncludeType extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->integer('type')->nullable(false)->default(1);
+            $table->softDeletes();
         });
     }
 
@@ -25,8 +26,6 @@ class UpdateUsersTableToIncludeType extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->integer('type');
-        });
+        Schema::dropColumn('type');
     }
 }

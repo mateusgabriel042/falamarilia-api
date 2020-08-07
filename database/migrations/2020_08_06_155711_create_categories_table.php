@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProfilesTable extends Migration
+class CreateCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateProfilesTable extends Migration
      */
     public function up()
     {
-        Schema::create('profiles', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users')->cascadeOnDelete();
-            $table->enum('genre', ['male', 'female', 'others'])->default('others');
-            $table->string('cpf')->unique()->nullable(false);
-            $table->string('phone')->nullable(false);
+            $table->string('label')->nullable(false);
+            $table->string('icon')->nullable(true);
+            $table->string('active')->nullable(false)->default(true);
+            $table->foreignId('service_id')
+                ->constrained('services')
+                ->cascadeOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -32,6 +33,6 @@ class CreateProfilesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profiles');
+        Schema::dropIfExists('categories');
     }
 }

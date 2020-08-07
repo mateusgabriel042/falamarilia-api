@@ -37,18 +37,46 @@ $router
             ->group(function () use ($router) {
 
 
-                // Profile Controller
+                // Profile Routes
                 $router
                     ->namespace('User')
                     ->prefix('profile')
                     ->name('profile.')
                     ->group(function () use ($router) {
-                        // $router->user();
                         $router->get('/', 'ProfilesController@get')->name('index');
                         $router->put('/', 'ProfilesController@update')->name('update');
                     });
 
-                // Reset Password
+                // Services Routes
+                $router
+                    ->namespace('Service')
+                    ->prefix('service')
+                    ->name('service.')
+                    ->group(function () use ($router) {
+                        $router->get('/', 'ServicesController@getAll')->name('all');
+                        $router->post('/', 'ServicesController@store')->name('store');
+                        $router->get('/{id}', 'ServicesController@get')->name('index');
+                        $router->put('/{id}', 'ServicesController@update')->name('update');
+                        $router->delete('/{id}', 'ServicesController@destroy')->name('destroy');
+                        $router->post('/category', 'ServicesController@storeCategory')->name('store.category');
+                        $router->put('{id}/category/{category_id}', 'ServicesController@updateCategory')->name('update.category');
+                        $router->delete('{id}/category/{category_id}', 'ServicesController@destroyCategory')->name('destroy.category');
+                    });
+
+                // Categories Routes
+                $router
+                    ->namespace('Categories')
+                    ->prefix('category')
+                    ->name('category.')
+                    ->group(function () use ($router) {
+                        $router->get('/', 'CategoryController@getAll')->name('all');
+                        $router->get('/{id}', 'CategoryController@get')->name('index');
+                        $router->put('/{id}', 'CategoryController@update')->name('update');
+                        $router->post('/', 'CategoryController@store')->name('store');
+                        $router->delete('/{id}', 'CategoryController@destroy')->name('destroy');
+                    });
+
+                // Reset Password Routes
                 $router
                     ->namespace('Auth')
                     ->prefix('password')
