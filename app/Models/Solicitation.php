@@ -35,4 +35,9 @@ class Solicitation extends Model
     {
         return $this->hasOne(Category::class);
     }
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Repositories\Notices;
 
 use App\Models\Notice;
 use App\Repositories\Notices\NoticesRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class NoticesRepositoryEloquent implements NoticesRepositoryInterface
@@ -18,6 +19,7 @@ class NoticesRepositoryEloquent implements NoticesRepositoryInterface
     public function getAll()
     {
         return $this->notice
+            ->where('expired_at', '>=', Carbon::now())
             ->get();
     }
 
@@ -25,6 +27,7 @@ class NoticesRepositoryEloquent implements NoticesRepositoryInterface
     {
         return $this->notice
             ->where('id', $id)
+            ->where('expired_at', '>', Carbon::now())
             ->get();
     }
 

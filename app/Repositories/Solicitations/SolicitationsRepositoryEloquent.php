@@ -38,6 +38,7 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
 
     public function store(Request $request)
     {
+        // dd($request->photo);
         return $this->solicitation->create($request->all());
     }
 

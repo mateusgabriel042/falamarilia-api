@@ -86,6 +86,20 @@ class SolicitationsService
             return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
         } else {
             try {
+
+                if ($request->hasFile('file')) {
+                    $filenameWithExt = $request->file('file')->getClientOriginalName();
+                    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                    $extension = $request->file('file')->getClientOriginalExtension();
+
+                    $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+
+                    $path = $request->file('file')->storeAs('images/solicitations/', $fileNameToStore);
+                    $request['photo'] = 'storage/images/solicitations/' . $fileNameToStore;
+                } else {
+                    $request['photo'] = 'noImage';
+                }
+
                 $solicitation = $this->solicitationsRepository->store($request);
                 return response()->json($solicitation, Response::HTTP_CREATED);
             } catch (Exception $e) {

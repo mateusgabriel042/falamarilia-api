@@ -14,7 +14,6 @@ class CategoryValidator
 
     public const NEW_PACKAGE_RULE = [
         'label' => 'required | string',
-        'icon' => 'required | string',
         'active' => 'required | integer | max:1 | min:0',
     ];
 }

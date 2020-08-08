@@ -19,7 +19,6 @@ class ServiceValidator
             'min: 7',
             'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'
         ],
-        'icon' => 'required | string',
         'active' => 'required | integer | min:0 | max:1',
     ];
 }

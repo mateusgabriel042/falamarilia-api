@@ -15,5 +15,6 @@ class NoticeValidator
         'title' => 'required | string | max:80 | min:5',
         'description' => 'required | string | max:250 | min:20',
         'type' => 'required | string',
+        'expired_at' => 'required',
     ];
 }

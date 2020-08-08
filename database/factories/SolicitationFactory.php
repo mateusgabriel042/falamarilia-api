@@ -2,10 +2,8 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\User;
+use App\Models\Solicitation;
 use Faker\Generator as Faker;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,14 +16,17 @@ use Illuminate\Support\Str;
 |
 */
 
-$factory->define(User::class, function (Faker $faker) {
+
+$factory->define(Solicitation::class, function (Faker $faker) {
+    $status = ['Aguardando Resposta', 'Respondida', 'Finalizada'];
+
     return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
-        'type' => 2,
-        'remember_token' => Str::random(10),
-        'email_verified_at' => now(),
-        'password' => Hash::make('123456'),
-        'remember_token' => Str::random(10),
+        'service_id' => 1,
+        'user_id' => 1,
+        'category_id' => 1,
+        'status' => $status[array_rand($status, 1)],
+        'description' => $faker->paragraph($nbSentences = 2, $variableNbSentences = true),
+        'photo' => 'noImage',
+        'geolocation' => 'NULL',
     ];
 });

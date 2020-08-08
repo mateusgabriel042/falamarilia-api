@@ -16,7 +16,6 @@ class SolicitationValidator
         'category_id' => 'required | integer',
         'user_id' => 'required | integer',
         'description' => 'required | string',
-        'photo' => 'required',
         'geolocation' => 'required',
         'status' => 'required',
     ];

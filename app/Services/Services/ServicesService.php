@@ -69,6 +69,20 @@ class ServicesService
             return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
         } else {
             try {
+
+                if ($request->hasFile('file')) {
+                    $filenameWithExt = $request->file('file')->getClientOriginalName();
+                    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                    $extension = $request->file('file')->getClientOriginalExtension();
+
+                    $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+
+                    $path = $request->file('file')->storeAs('images/services/', $fileNameToStore);
+                    $request['icon'] = 'storage/images/services/' . $fileNameToStore;
+                } else {
+                    $request['icon'] = 'noImage';
+                }
+
                 $service = $this->servicesRepository->store($request);
                 return response()->json($service, Response::HTTP_CREATED);
             } catch (Exception $e) {
@@ -91,6 +105,20 @@ class ServicesService
             return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
         } else {
             try {
+
+                if ($request->hasFile('file')) {
+                    $filenameWithExt = $request->file('file')->getClientOriginalName();
+                    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                    $extension = $request->file('file')->getClientOriginalExtension();
+
+                    $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+
+                    $path = $request->file('file')->storeAs('images/categories/', $fileNameToStore);
+                    $request['icon'] = 'storage/images/categories/' . $fileNameToStore;
+                } else {
+                    $request['icon'] = 'noImage';
+                }
+
                 $category = $this->servicesRepository->storeCategory($request);
                 return response()->json($category, Response::HTTP_CREATED);
             } catch (Exception $e) {
@@ -104,6 +132,20 @@ class ServicesService
     public function update(int $id, Request $request)
     {
         try {
+
+            if ($request->hasFile('file')) {
+                $filenameWithExt = $request->file('file')->getClientOriginalName();
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                $extension = $request->file('file')->getClientOriginalExtension();
+
+                $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+
+                $path = $request->file('file')->storeAs('images/services/', $fileNameToStore);
+                $request['icon'] = 'storage/images/services/' . $fileNameToStore;
+            } else {
+                $request['icon'] = 'noImage';
+            }
+
             $service = $this->servicesRepository->update($id, $request);
             return response()->json(['message' => 'Serviço atualizado com sucesso!'], Response::HTTP_OK);
         } catch (Exception $e) {
@@ -116,6 +158,20 @@ class ServicesService
     public function updateCategory(int $id, $category_id, Request $request)
     {
         try {
+
+            if ($request->hasFile('file')) {
+                $filenameWithExt = $request->file('file')->getClientOriginalName();
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                $extension = $request->file('file')->getClientOriginalExtension();
+
+                $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+
+                $path = $request->file('file')->storeAs('images/categories/', $fileNameToStore);
+                $request['icon'] = 'storage/images/categories/' . $fileNameToStore;
+            } else {
+                $request['icon'] = 'noImage';
+            }
+
             $category = $this->servicesRepository->updateCategory($id, $category_id, $request);
             return response()->json(['message' => 'Categoria atualizada com sucesso!'], Response::HTTP_OK);
         } catch (Exception $e) {
