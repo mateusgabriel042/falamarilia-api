@@ -29,6 +29,8 @@ class ApiAuthController extends Controller
         }
 
         $user = new User;
+        $user->name = $request->get('name');
+        $user->email = $request->get('email');
         $user->password = Hash::make($request->get('password'));
         $user->remember_token = Str::random(10);
         $user->type = $request->get('type') ? $request->get('type') : 1;
