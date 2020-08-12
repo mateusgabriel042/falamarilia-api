@@ -39,6 +39,16 @@ $router
                 $router->post('/logout', 'Auth\ApiAuthController@logout')->name('logout');
             });
 
+        // Reset Password Routes
+        $router
+            ->namespace('Auth')
+            ->prefix('password')
+            ->name('password.')
+            ->group(function () use ($router) {
+                $router->post('/send', 'ResetPasswordController@sendPasswordByEmail')->name('send');
+                // $router->post('/forgot', 'ResetPasswordController@resetPassword')->name('forgot');
+            });
+
         // Protected Routes
         $router
             ->middleware(['auth:api'])
@@ -106,16 +116,6 @@ $router
                             ->middleware('api.superAdmin')->name('store');
                         $router->delete('/{id}', 'NoticesController@destroy')
                             ->middleware('api.superAdmin')->name('destroy');
-                    });
-
-                // Reset Password Routes
-                $router
-                    ->namespace('Auth')
-                    ->prefix('password')
-                    ->name('password.')
-                    ->group(function () use ($router) {
-                        $router->post('/send', 'ResetPasswordController@sendPasswordByEmail')->name('send');
-                        $router->post('/forgot', 'ResetPasswordController@resetPassword')->name('forgot');
                     });
             });
     });
