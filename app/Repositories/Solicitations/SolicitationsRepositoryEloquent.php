@@ -24,6 +24,25 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
     public function getAllUser()
     {
         return $this->solicitation
+            ->select(
+                'solicitations.id',
+                'solicitations.service_id',
+                'se.name AS service_name',
+                'se.icon AS service_icon',
+                'se.color AS service_color',
+                'solicitations.user_id',
+                'solicitations.category_id',
+                'ca.label AS category_name',
+                'solicitations.status',
+                'solicitations.description',
+                'solicitations.photo',
+                'solicitations.geolocation',
+                'solicitations.comment',
+                'solicitations.created_at',
+                'solicitations.updated_at',
+            )
+            ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
+            ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
             ->where('user_id', auth()->user()->id)
             ->get();
     }
