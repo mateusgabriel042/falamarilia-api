@@ -17,9 +17,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return 'Fala Marília';
 });
-
-Auth::routes();
-
-Route::group(['middleware' => [], 'prefix' => 'manager', 'namespace' => 'Manager\\'], function () {
-    Route::get('/', 'HomeController@index')->name('home');
-});
