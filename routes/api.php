@@ -49,6 +49,14 @@ $router
                 // $router->post('/forgot', 'ResetPasswordController@resetPassword')->name('forgot');
             });
 
+        // Solicitations Routes
+        $router
+            ->namespace('Solicitation')
+            ->prefix('solicitation')
+            ->name('solicitation.')
+            ->group(function () use ($router) {
+                $router->post('/', 'SolicitationsController@store')->name('store');
+            });
         // Protected Routes
         $router
             ->middleware(['auth:api'])
@@ -97,7 +105,7 @@ $router
                             ->middleware('api.superAdmin')->name('all');
                         $router->get('/user', 'SolicitationsController@getAllUser')->name('allUser');
                         $router->get('/{id}', 'SolicitationsController@get')->name('index');
-                        $router->post('/', 'SolicitationsController@store')->name('store');
+                        // $router->post('/', 'SolicitationsController@store')->name('store');
                         $router->put('/{id}', 'SolicitationsController@update')
                             ->middleware('api.superAdmin')->name('update');
                     });

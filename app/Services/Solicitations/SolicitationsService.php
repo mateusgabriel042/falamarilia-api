@@ -7,6 +7,7 @@ use App\Validators\SolicitationValidator;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
 
@@ -76,38 +77,39 @@ class SolicitationsService
 
     public function store(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            SolicitationValidator::NEW_PACKAGE_RULE,
-            SolicitationValidator::ERROR_MESSAGES
-        );
+        // $validator = Validator::make(
+        //     $request->all(),
+        //     SolicitationValidator::NEW_PACKAGE_RULE,
+        //     SolicitationValidator::ERROR_MESSAGES
+        // );
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
-        } else {
-            try {
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
+        // } else {
+        try {
 
-                if ($request->hasFile('file')) {
-                    $filenameWithExt = $request->file('file')->getClientOriginalName();
-                    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                    $extension = $request->file('file')->getClientOriginalExtension();
+            if ($request->file) {
+                $image = $request->input('file'); // image base64 encoded
+                preg_match("/data:image\/(.*?);/", $image, $image_extension); // extract the image extension
+                $image = preg_replace('/data:image\/(.*?);base64,/', '', $image); // remove the type part
+                $image = str_replace(' ', '+', $image);
+                $imageName = 'image_' . time() . '.' . $image_extension[1]; //generating unique file name;
 
-                    $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+                Storage::disk('solicitations')->put($imageName, base64_decode($image));
 
-                    $path = $request->file('file')->storeAs('images/solicitations/', $fileNameToStore);
-                    $request['photo'] = 'storage/images/solicitations/' . $fileNameToStore;
-                } else {
-                    $request['photo'] = 'noImage';
-                }
-
-                $solicitation = $this->solicitationsRepository->store($request);
-                return response()->json($solicitation, Response::HTTP_CREATED);
-            } catch (Exception $e) {
-                return response()->json(['erro' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-            } catch (Throwable $t) {
-                return response()->json(['erro' => $t->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+                $request['photo'] = 'storage/images/solicitations/' . $imageName;
+            } else {
+                $request['photo'] = 'noImage';
             }
+
+            $solicitation = $this->solicitationsRepository->store($request);
+            return response()->json($solicitation, Response::HTTP_CREATED);
+        } catch (Exception $e) {
+            return response()->json(['erro' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (Throwable $t) {
+            return response()->json(['erro' => $t->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+        // }
     }
 
     public function update(int $id, Request $request)
