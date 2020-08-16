@@ -21,7 +21,9 @@ class Solicitation extends Model
         'status',
         'description',
         'photo',
-        'geolocation'
+        'geolocation',
+        'comment',
+        'protocol'
     ];
 
     public $timestamps = true;

@@ -14,7 +14,13 @@ class AlterSolicitationsTable extends Migration
     public function up()
     {
         Schema::table('solicitations', function (Blueprint $table) {
-            $table->string('comment')->nullable(true);
+
+            if (Schema::hasColumn('solicitations', 'comment')) {
+            } else {
+                $table->string('comment')->nullable(true);
+            }
+            $table->string('protocol')->nullable(true);
+            $table->string('geolocation')->nullable(true)->change();
         });
     }
 

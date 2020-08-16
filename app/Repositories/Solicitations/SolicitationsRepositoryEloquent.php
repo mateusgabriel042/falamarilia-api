@@ -18,6 +18,7 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
     public function getAll()
     {
         return $this->solicitation
+            ->orderBy('id', 'desc')
             ->get();
     }
 
@@ -38,12 +39,14 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
                 'solicitations.photo',
                 'solicitations.geolocation',
                 'solicitations.comment',
+                'solicitations.protocol',
                 'solicitations.created_at',
                 'solicitations.updated_at',
             )
             ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
             ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
             ->where('user_id', auth()->user()->id)
+            ->orderBy('solicitations.id', 'DESC')
             ->get();
     }
 

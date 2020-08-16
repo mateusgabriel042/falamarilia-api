@@ -15,7 +15,8 @@ class Profile extends Model
         'cpf',
         'user_id',
         'genre',
-        'phone'
+        'phone',
+        'resident'
     ];
 
     public $timestamps = true;

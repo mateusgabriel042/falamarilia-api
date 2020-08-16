@@ -41,6 +41,7 @@ class ApiAuthController extends Controller
             $profile->genre = $request->get('genre') ? $request->get('genre') : 'others';
             $profile->phone = $request->get('phone');
             $profile->cpf = $request->get('cpf');
+            $profile->resident = $request->get('resident');
             $profile->save();
         }
 

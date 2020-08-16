@@ -102,6 +102,8 @@ class SolicitationsService
                 $request['photo'] = 'noImage';
             }
 
+            $request['protocol'] = time() . '/' . date('Y');
+
             $solicitation = $this->solicitationsRepository->store($request);
             return response()->json($solicitation, Response::HTTP_CREATED);
         } catch (Exception $e) {
