@@ -39,7 +39,7 @@ class BadgesController extends Controller
     {
         try {
             $solicitations = Solicitation::selectRaw('year(created_at) year, monthname(created_at) month, count(*) data')
-                ->where('created_at', '>=', '1577836800')
+                ->where('created_at', '>=', '2020-01-01 00:00:00')
                 ->groupBy('year', 'month')
                 ->orderBy('month', 'desc')
                 ->get();
