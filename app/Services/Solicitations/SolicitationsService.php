@@ -21,10 +21,13 @@ class SolicitationsService
         $this->solicitationsRepository = $solicitationsRepository;
     }
 
-    public function getAll()
+    public function getAll(Request $request)
     {
         try {
-            $solicitations = $this->solicitationsRepository->getAll();
+
+            $page = $request->get('page');
+            $waiting = $request->get('waiting');
+            $solicitations = $this->solicitationsRepository->getAll($page, $waiting);
             $countItems = (count($solicitations) > 0) ? true : false;
 
             if ($countItems) {
@@ -67,6 +70,55 @@ class SolicitationsService
                 return response()->json($solicitation, Response::HTTP_OK);
             } else {
                 return response()->json(null, Response::HTTP_NOT_FOUND);
+            }
+        } catch (Exception $e) {
+            return response()->json(['erro' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (Throwable $t) {
+            return response()->json(['erro' => $t->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getAdmin(int $id)
+    {
+        try {
+            $solicitation = $this->solicitationsRepository->getAdmin($id);
+            $countItems = (count($solicitation) > 0) ? true : false;
+
+            if ($countItems) {
+                return response()->json($solicitation, Response::HTTP_OK);
+            } else {
+                return response()->json(null, Response::HTTP_NOT_FOUND);
+            }
+        } catch (Exception $e) {
+            return response()->json(['erro' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (Throwable $t) {
+            return response()->json(['erro' => $t->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            $search = $request->get('search');
+            $page = $request->get('page');
+
+            if ($search) {
+                $solicitation = $this->solicitationsRepository->search($search, $page);
+                $countItems = (count($solicitation) > 0) ? true : false;
+
+                if ($countItems) {
+                    return response()->json($solicitation, Response::HTTP_OK);
+                }
+            } else {
+
+                $solicitations = $this->solicitationsRepository->getAll($page);
+                $countItems = (count($solicitations) > 0) ? true : false;
+
+                if ($countItems) {
+                    return response()->json($solicitations, Response::HTTP_OK);
+                } else {
+                    return response()->json([], Response::HTTP_OK);
+                }
             }
         } catch (Exception $e) {
             return response()->json(['erro' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);

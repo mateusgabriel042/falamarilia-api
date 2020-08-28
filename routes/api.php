@@ -63,6 +63,14 @@ $router
             ->group(function () use ($router) {
 
 
+                // Authenticated Routes
+                $router
+                    ->namespace('Auth')
+                    ->name('auth.')
+                    ->group(function () use ($router) {
+                        $router->get('/authenticated', 'ApiAuthController@authenticated')->name('index');
+                    });
+
                 // Profile Routes
                 $router
                     ->namespace('User')
@@ -71,6 +79,16 @@ $router
                     ->group(function () use ($router) {
                         $router->get('/', 'ProfilesController@get')->name('index');
                         $router->put('/', 'ProfilesController@update')->name('update');
+                    });
+
+                // Badges Routes
+                $router
+                    ->namespace('Badge')
+                    ->prefix('badges')
+                    ->name('badges.')
+                    ->group(function () use ($router) {
+                        $router->get('/qtysolicitations', 'BadgesController@get')->name('index');
+                        $router->get('/groupsolicitations', 'BadgesController@getMonth')->name('month');
                     });
 
                 // Services Routes
@@ -105,6 +123,10 @@ $router
                             ->middleware('api.superAdmin')->name('all');
                         $router->get('/user', 'SolicitationsController@getAllUser')->name('allUser');
                         $router->get('/{id}', 'SolicitationsController@get')->name('index');
+                        $router->get('/admin/{id}', 'SolicitationsController@getAdmin')
+                            ->middleware('api.superAdmin')->name('admin');
+                        $router->get('/search/protocol', 'SolicitationsController@search')
+                            ->middleware('api.superAdmin')->name('search');
                         // $router->post('/', 'SolicitationsController@store')->name('store');
                         $router->put('/{id}', 'SolicitationsController@update')
                             ->middleware('api.superAdmin')->name('update');

@@ -22,6 +22,7 @@ class Solicitation extends Model
         'description',
         'photo',
         'geolocation',
+        'geoloc',
         'comment',
         'protocol'
     ];

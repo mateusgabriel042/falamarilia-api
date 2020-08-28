@@ -16,9 +16,9 @@ class SolicitationsController extends Controller
         $this->solicitationsService = $solicitationsService;
     }
 
-    public function getAll()
+    public function getAll(Request $request)
     {
-        return $this->solicitationsService->getAll();
+        return $this->solicitationsService->getAll($request);
     }
 
     public function getAllUser()
@@ -29,6 +29,16 @@ class SolicitationsController extends Controller
     public function get($id)
     {
         return $this->solicitationsService->get($id);
+    }
+
+    public function getAdmin($id)
+    {
+        return $this->solicitationsService->getAdmin($id);
+    }
+
+    public function search(Request $request)
+    {
+        return $this->solicitationsService->search($request);
     }
 
     public function store(Request $request)

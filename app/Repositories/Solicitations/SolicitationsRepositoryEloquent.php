@@ -15,11 +15,51 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
         $this->solicitation = $solicitation;
     }
 
-    public function getAll()
+    public function getAll($page, $waiting)
     {
-        return $this->solicitation
-            ->orderBy('id', 'desc')
+        $perPage = $waiting ? 10000 : 10;
+        $selectedPage = $page ? $page : 1;
+        $startAt = $waiting ? 0 : $perPage * ($selectedPage - 1);
+        $solicitations = $this->solicitation
+            ->select(
+                'solicitations.id',
+                'solicitations.service_id',
+                'se.name AS service_name',
+                'se.icon AS service_icon',
+                'se.color AS service_color',
+                'solicitations.user_id',
+                'us.name AS user_name',
+                'solicitations.category_id',
+                'ca.label AS category_name',
+                'solicitations.status',
+                'solicitations.description',
+                'solicitations.photo',
+                'solicitations.geolocation',
+                'solicitations.geoloc',
+                'solicitations.comment',
+                'solicitations.protocol',
+                'solicitations.created_at',
+                'solicitations.updated_at',
+            )
+            ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
+            ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
+            // ->join('profiles AS pr', 'pr.id', '=', 'solicitations.user_id')
+            ->join('users AS us', 'us.id', '=', 'solicitations.user_id')
+            ->orderBy('solicitations.id', 'DESC')
+            ->offset($startAt)
+            ->limit($perPage)
             ->get();
+
+        $solicitationsAmnt = $this->solicitation->count();
+        return [
+            "meta" => [
+                "perPage" => 10,
+                "page" => $selectedPage,
+                "pagesQty" => ceil($solicitationsAmnt / $perPage),
+                "totalRecords" => $solicitationsAmnt,
+            ],
+            "records" => $solicitations
+        ];
     }
 
     public function getAllUser()
@@ -32,12 +72,14 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
                 'se.icon AS service_icon',
                 'se.color AS service_color',
                 'solicitations.user_id',
+                // 'pr.name AS user_name',
                 'solicitations.category_id',
                 'ca.label AS category_name',
                 'solicitations.status',
                 'solicitations.description',
                 'solicitations.photo',
                 'solicitations.geolocation',
+                'solicitations.geoloc',
                 'solicitations.comment',
                 'solicitations.protocol',
                 'solicitations.created_at',
@@ -45,6 +87,7 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
             )
             ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
             ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
+            // ->join('profiles AS pr', 'pr.id', '=', 'solicitations.user_id')
             ->where('user_id', auth()->user()->id)
             ->orderBy('solicitations.id', 'DESC')
             ->get();
@@ -53,9 +96,111 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
     public function get(int $id)
     {
         return $this->solicitation
-            ->where('id', $id)
-            ->where('user_id', auth()->user()->id)
+            ->select(
+                'solicitations.id',
+                'solicitations.service_id',
+                'se.name AS service_name',
+                'se.icon AS service_icon',
+                'se.color AS service_color',
+                'solicitations.user_id',
+                'us.name AS user_name',
+                'solicitations.category_id',
+                'ca.label AS category_name',
+                'solicitations.status',
+                'solicitations.description',
+                'solicitations.photo',
+                'solicitations.geolocation',
+                'solicitations.geoloc',
+                'solicitations.comment',
+                'solicitations.protocol',
+                'solicitations.created_at',
+                'solicitations.updated_at',
+            )
+            ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
+            ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
+            ->join('profiles AS pr', 'pr.id', '=', 'solicitations.user_id')
+            ->join('users AS us', 'us.id', '=', 'solicitations.user_id')
+            ->where('solicitations.id', $id)
+            ->where('solicitations.user_id', auth()->user()->id)
+            ->orderBy('solicitations.id', 'DESC')
             ->get();
+    }
+
+    public function getAdmin(int $id)
+    {
+        return $this->solicitation
+            ->select(
+                'solicitations.id',
+                'solicitations.service_id',
+                'se.name AS service_name',
+                'se.icon AS service_icon',
+                'se.color AS service_color',
+                'solicitations.user_id',
+                // 'us.name AS user_name',
+                'solicitations.category_id',
+                'ca.label AS category_name',
+                'solicitations.status',
+                'solicitations.description',
+                'solicitations.photo',
+                'solicitations.geolocation',
+                'solicitations.geoloc',
+                'solicitations.comment',
+                'solicitations.protocol',
+                'solicitations.created_at',
+                'solicitations.updated_at',
+            )
+            ->where('solicitations.id', $id)
+            ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
+            ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
+            ->join('users AS us', 'us.id', '=', 'solicitations.user_id')
+            ->get();
+    }
+
+    public function search($search, $page)
+    {
+        $perPage = 10;
+        $selectedPage = $page ? $page : 1;
+        $startAt = $perPage * ($selectedPage - 1);
+        $solicitations = $this->solicitation
+            ->select(
+                'solicitations.id',
+                'solicitations.service_id',
+                'se.name AS service_name',
+                'se.icon AS service_icon',
+                'se.color AS service_color',
+                'solicitations.user_id',
+                // 'us.name AS user_name',
+                'solicitations.category_id',
+                'ca.label AS category_name',
+                'solicitations.status',
+                'solicitations.description',
+                'solicitations.photo',
+                'solicitations.geolocation',
+                'solicitations.geoloc',
+                'solicitations.comment',
+                'solicitations.protocol',
+                'solicitations.created_at',
+                'solicitations.updated_at',
+            )
+            ->where('solicitations.protocol', 'LIKE', $search . '%')
+            ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
+            ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
+            ->join('users AS us', 'us.id', '=', 'solicitations.user_id')
+            ->offset($startAt)
+            ->limit($perPage)
+            ->get();
+
+        $solicitationsAmnt = $solicitations->count();
+
+        return [
+            "meta" => [
+                "perPage" => 10,
+                "page" => $selectedPage,
+                "pagesQty" => ceil($solicitationsAmnt / $perPage),
+                "totalRecords" => $solicitationsAmnt,
+            ],
+            "records" => $solicitations
+        ];
     }
 
     public function store(Request $request)

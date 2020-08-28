@@ -16,6 +16,11 @@ use Illuminate\Http\JsonResponse;
 
 class ApiAuthController extends Controller
 {
+    public function authenticated(Request $request): JsonResponse
+    {
+        return response()->json(['message' => 'Authenticated.'], Response::HTTP_OK);
+    }
+
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make(
