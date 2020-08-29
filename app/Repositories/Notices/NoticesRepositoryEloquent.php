@@ -33,8 +33,11 @@ class NoticesRepositoryEloquent implements NoticesRepositoryInterface
 
     public function store(Request $request)
     {
-        $request['expired_at'] = Carbon::now()->addDays(10);
-        return $this->notice->create($request->all());
+        $notice = $this->notice->create($request->all());
+        $notice->expired_at = Carbon::now()->addDays(10);
+        $notice->save();
+
+        return $notice;
     }
 
     public function update(int $id, Request $request)
