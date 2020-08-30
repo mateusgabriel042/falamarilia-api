@@ -13,6 +13,7 @@ class Notice extends Model
         'title',
         'description',
         'type',
+        'expired_at'
     ];
 
     public $timestamps = true;
