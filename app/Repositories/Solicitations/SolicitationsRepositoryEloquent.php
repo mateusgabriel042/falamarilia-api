@@ -212,7 +212,7 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
 
     public function store(Request $request)
     {
-        dd($request);
+        // dd($request->service_id);
         return $this->solicitation->create($request->all());
     }
 
