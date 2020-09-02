@@ -40,7 +40,7 @@ class NoticesRepositoryEloquent implements NoticesRepositoryInterface
             $notice->expired_at = $request->expired_at;
             $notice->save();
 
-            return $this->notice->create($request->all());
+            return $notice;
         }
         return [];
     }
