@@ -10,10 +10,12 @@ use Illuminate\Http\Request;
 class NoticesRepositoryEloquent implements NoticesRepositoryInterface
 {
     private $notice;
+    private $serviceValidate;
 
     public function __construct(Notice $notice)
     {
         $this->notice = $notice;
+        $this->serviceValidate = auth()->user()->service;
     }
 
     public function getAll()
@@ -33,23 +35,32 @@ class NoticesRepositoryEloquent implements NoticesRepositoryInterface
 
     public function store(Request $request)
     {
-        $notice = $this->notice->create($request->all());
-        $notice->expired_at = $request->expired_at;
-        $notice->save();
+        if ($this->serviceValidate == -1) {
+            $notice = $this->notice->create($request->all());
+            $notice->expired_at = $request->expired_at;
+            $notice->save();
 
-        return $this->notice->create($request->all());
+            return $this->notice->create($request->all());
+        }
+        return [];
     }
 
     public function update(int $id, Request $request)
     {
-        return $this->notice
-            ->where('id', $id)
-            ->update($request->all());
+        if ($this->serviceValidate == -1) {
+            return $this->notice
+                ->where('id', $id)
+                ->update($request->all());
+        }
+        return [];
     }
 
     public function destroy(int $id)
     {
-        $notice = $this->notice->find($id);
-        return $notice->delete();
+        if ($this->serviceValidate == -1) {
+            $notice = $this->notice->find($id);
+            return $notice->delete();
+        }
+        return [];
     }
 }

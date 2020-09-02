@@ -14,11 +14,22 @@ class BadgesController extends Controller
     public function get()
     {
         try {
-            $solicitationsQty = Solicitation::all()->count();
-            $solicitationsAnswered = Solicitation::where('status', '!=', 'Aguardando Resposta')->count();
-            $solicitationsUnanswered = Solicitation::where('status', '=', 'Aguardando Resposta')->count();
+            $service = auth()->user()->service;
+            $symbol = $service !== -1 ? '=' : '!=';
+
+            $solicitationsQty = Solicitation::all()
+                ->where('responsible', $symbol, $service)
+                ->count();
+            $solicitationsAnswered = Solicitation::where('status', '!=', 'Aguardando Resposta')
+                ->where('responsible', $symbol, $service)
+                ->count();
+            $solicitationsUnanswered = Solicitation::where('status', '=', 'Aguardando Resposta')
+                ->where('responsible', $symbol, $service)
+                ->count();
             $solicitationsLate = Solicitation::where('created_at', '<=', Carbon::now()->subDays(2))
-                ->where('status', '=', 'Aguardando Resposta')->count();
+                ->where('status', '=', 'Aguardando Resposta')
+                ->where('responsible', $symbol, $service)
+                ->count();
 
             $badges = [
                 'solicitationsQty' => $solicitationsQty,

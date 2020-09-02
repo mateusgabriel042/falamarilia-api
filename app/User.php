@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Profile;
+use App\Models\Service;
 use App\Models\Solicitation;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +17,7 @@ class User extends Authenticatable
     use HasApiTokens, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'service'
     ];
 
     protected $hidden = [
@@ -35,5 +36,10 @@ class User extends Authenticatable
     public function solicitation(): HasMany
     {
         return $this->hasMany(Solicitation::class);
+    }
+
+    public function service(): HasOne
+    {
+        return $this->hasOne('App\Models\Service', 'id', 'service');
     }
 }

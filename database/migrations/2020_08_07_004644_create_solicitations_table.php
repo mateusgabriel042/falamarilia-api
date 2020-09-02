@@ -24,7 +24,7 @@ class CreateSolicitationsTable extends Migration
             $table->foreignId('category_id')
                 ->constrained('categories')
                 ->cascadeOnDelete();
-            $table->enum('status', ['Aguardando Resposta', 'Respondida', 'Finalizada']);
+            $table->enum('status', ['Aguardando Resposta', 'Em Andamento', 'Respondida', 'Finalizada']);
             $table->string('description');
             $table->string('photo');
             $table->string('geolocation');

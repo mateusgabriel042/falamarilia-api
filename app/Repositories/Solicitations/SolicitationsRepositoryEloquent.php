@@ -9,10 +9,14 @@ use Illuminate\Http\Request;
 class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterface
 {
     private $solicitation;
+    private $serviceValidate;
+    private $symbol;
 
     public function __construct(Solicitation $solicitation)
     {
         $this->solicitation = $solicitation;
+        $this->serviceValidate = auth()->user()->service;
+        $this->symbol = $this->serviceValidate == -1 ? '!=' : '=';
     }
 
     public function getAll($page, $waiting)
@@ -43,14 +47,14 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
             )
             ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
             ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
-            // ->join('profiles AS pr', 'pr.id', '=', 'solicitations.user_id')
             ->join('users AS us', 'us.id', '=', 'solicitations.user_id')
+            ->where('solicitations.responsible', $this->symbol, $this->serviceValidate)
             ->orderBy('solicitations.id', 'DESC')
             ->offset($startAt)
             ->limit($perPage)
             ->get();
 
-        $solicitationsAmnt = $this->solicitation->count();
+        $solicitationsAmnt = $this->serviceValidate == -1 ? $this->solicitation->count() : $solicitations->count();
         return [
             "meta" => [
                 "perPage" => 10,
@@ -136,7 +140,7 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
                 'se.icon AS service_icon',
                 'se.color AS service_color',
                 'solicitations.user_id',
-                // 'us.name AS user_name',
+                'us.name AS user_name',
                 'solicitations.category_id',
                 'ca.label AS category_name',
                 'solicitations.status',
@@ -146,6 +150,7 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
                 'solicitations.geoloc',
                 'solicitations.comment',
                 'solicitations.protocol',
+                'solicitations.responsible',
                 'solicitations.created_at',
                 'solicitations.updated_at',
             )
@@ -153,6 +158,7 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
             ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
             ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
             ->join('users AS us', 'us.id', '=', 'solicitations.user_id')
+            ->where('solicitations.responsible', $this->symbol, $this->serviceValidate)
             ->get();
     }
 
@@ -169,7 +175,7 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
                 'se.icon AS service_icon',
                 'se.color AS service_color',
                 'solicitations.user_id',
-                // 'us.name AS user_name',
+                'us.name AS user_name',
                 'solicitations.category_id',
                 'ca.label AS category_name',
                 'solicitations.status',
@@ -186,11 +192,12 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
             ->join('services AS se', 'se.id', '=', 'solicitations.service_id')
             ->join('categories AS ca', 'ca.id', '=', 'solicitations.category_id')
             ->join('users AS us', 'us.id', '=', 'solicitations.user_id')
+            ->where('solicitations.responsible', $this->symbol, $this->serviceValidate)
             ->offset($startAt)
             ->limit($perPage)
             ->get();
 
-        $solicitationsAmnt = $solicitations->count();
+        $solicitationsAmnt = $this->serviceValidate == -1 ? $this->solicitation->count() : $solicitations->count();
 
         return [
             "meta" => [
@@ -211,8 +218,12 @@ class SolicitationsRepositoryEloquent implements SolicitationsRepositoryInterfac
 
     public function update(int $id, Request $request)
     {
-        return $this->solicitation
-            ->where('id', $id)
-            ->update($request->all());
+        if ($this->serviceValidate == -1 || $request->service_id == $this->serviceValidate) {
+            return $this->solicitation
+                ->where('id', $id)
+                ->update($request->all());
+        }
+
+        return [];
     }
 }

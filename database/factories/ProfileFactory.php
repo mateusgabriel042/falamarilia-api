@@ -23,7 +23,8 @@ $factory->define(Profile::class, function (Faker $faker) {
     return [
         'genre' => $genres[array_rand($genres, 1)],
         'cpf' => cpfRandom(0),
-        'phone' => $faker->phoneNumber
+        'phone' => $faker->phoneNumber,
+        'resident' => 1
     ];
 });
 

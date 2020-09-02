@@ -3,6 +3,7 @@
 namespace App\Repositories\Profiles;
 
 use App\Models\Profile;
+use App\Models\Service;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -23,12 +24,16 @@ class ProfilesRepositoryEloquent implements ProfilesRepositoryInterface
 
         if ($user && $profile) {
 
+            $service = Service::where('id', $user->service)->first();
+
             $return = [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'service' => $service ? $service->name : 'Administração',
                 'cpf' => $profile->cpf,
                 'phone' => $profile->phone,
+                'created_at' => $profile->created_at
             ];
         } else {
             $return = [];
@@ -54,6 +59,6 @@ class ProfilesRepositoryEloquent implements ProfilesRepositoryInterface
 
         return $this->profile
             ->where('id', $id)
-            ->update($request->except(['name', 'email', 'password', 'password_confirmation', 'type']));
+            ->update($request->except(['name', 'email', 'password', 'password_confirmation', 'type', 'service']));
     }
 }
