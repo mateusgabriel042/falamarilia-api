@@ -141,8 +141,8 @@ class SolicitationsService
         // } else {
         try {
 
-            if ($request->file) {
-                $image = $request->input('file'); // image base64 encoded
+            if ($request->file && $request->file != 'noImage') {
+                $image = $request->get('file'); // image base64 encoded
                 preg_match("/data:image\/(.*?);/", $image, $image_extension); // extract the image extension
                 $image = preg_replace('/data:image\/(.*?);base64,/', '', $image); // remove the type part
                 $image = str_replace(' ', '+', $image);
@@ -156,6 +156,7 @@ class SolicitationsService
             }
 
             $request['protocol'] = time() . '/' . date('Y');
+            $request['responsible'] = 0;
 
             $solicitation = $this->solicitationsRepository->store($request);
             return response()->json($solicitation, Response::HTTP_CREATED);
