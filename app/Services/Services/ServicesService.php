@@ -70,16 +70,7 @@ class ServicesService
         } else {
             try {
 
-                if ($request->hasFile('file')) {
-                    $filenameWithExt = $request->file('file')->getClientOriginalName();
-                    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                    $extension = $request->file('file')->getClientOriginalExtension();
-
-                    $fileNameToStore = $filename . '_' . time() . '.' . $extension;
-
-                    $path = $request->file('file')->storeAs('images/services/', $fileNameToStore);
-                    $request['icon'] = 'storage/images/services/' . $fileNameToStore;
-                } else {
+                if (!$request->get('icon')) {
                     $request['icon'] = 'noImage';
                 }
 
