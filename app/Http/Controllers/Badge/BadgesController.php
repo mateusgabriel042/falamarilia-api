@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Solicitation;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
 use Throwable;
 
@@ -46,11 +47,13 @@ class BadgesController extends Controller
         }
     }
 
-    public function getMonth()
+    public function getMonth(HttpRequest $request)
     {
         try {
+            $limit = $request->get('limit');
+
             $solicitations = Solicitation::selectRaw('year(created_at) year, monthname(created_at) month, month(created_at) number, count(*) data')
-                ->where('created_at', '>=', '2020-01-01 00:00:00')
+                ->where('created_at', '>=', $limit ? Carbon::now()->subMonths(6) : date('YYYY-01-01'))
                 ->groupBy('year', 'month', 'number')
                 ->orderBy('number', 'asc')
                 ->get();
