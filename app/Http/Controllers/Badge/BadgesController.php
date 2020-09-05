@@ -49,10 +49,10 @@ class BadgesController extends Controller
     public function getMonth()
     {
         try {
-            $solicitations = Solicitation::selectRaw('year(created_at) year, monthname(created_at) month, count(*) data')
+            $solicitations = Solicitation::selectRaw('year(created_at) year, monthname(created_at) month, month(created_at) number, count(*) data')
                 ->where('created_at', '>=', '2020-01-01 00:00:00')
-                ->groupBy('year', 'month')
-                ->orderBy('created_at', 'desc')
+                ->groupBy('year', 'month', 'number')
+                ->orderBy('number', 'asc')
                 ->get();
 
             return response()->json($solicitations, Response::HTTP_OK);
