@@ -130,6 +130,7 @@ class ApiAuthController extends Controller
         $users = User::where('type', 1)
             ->with('profile')
             ->where('service', 0)
+            ->orderBy('name', 'ASC')
             ->offset($startAt)
             ->limit($perPage)
             ->get();
