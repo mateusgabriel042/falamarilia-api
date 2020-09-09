@@ -117,6 +117,16 @@ class ApiAuthController extends Controller
         return  response()->json($users, Response::HTTP_OK);
     }
 
+    public function listSimpleUsers(): JsonResponse
+    {
+
+        $users = User::where('type', 1)
+            ->where('service', 0)
+            ->get();
+
+        return  response()->json($users, Response::HTTP_OK);
+    }
+
     public function listUser($id): JsonResponse
     {
 

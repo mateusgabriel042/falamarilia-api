@@ -70,6 +70,7 @@ $router
                     ->group(function () use ($router) {
                         $router->get('/authenticated', 'ApiAuthController@authenticated')->name('index');
                         $router->get('/list', 'ApiAuthController@list')->name('all');
+                        $router->get('/simpleUsers', 'ApiAuthController@listSimpleUsers')->name('simpleUsers');
                         $router->get('/list/{id}', 'ApiAuthController@listUser')->name('listUser');
                         $router->put('/list/{id}', 'ApiAuthController@update')->name('update');
                         $router->delete('/delete/{id}', 'ApiAuthController@delete')->name('delete');
