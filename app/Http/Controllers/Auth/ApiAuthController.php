@@ -117,14 +117,33 @@ class ApiAuthController extends Controller
         return  response()->json($users, Response::HTTP_OK);
     }
 
-    public function listSimpleUsers(): JsonResponse
+    public function listSimpleUsers(Request $request): JsonResponse
     {
+        $page = $request->get('page') ?? 1;
+        $perPage = 10;
+        $selectedPage = $page ? $page : 1;
+        $startAt = $perPage * ($selectedPage - 1);
+
+        $usersAll = User::whereIn('type', [1, 2])
+            ->get();
 
         $users = User::where('type', 1)
             ->where('service', 0)
+            ->offset($startAt)
+            ->limit($perPage)
             ->get();
 
-        return  response()->json($users, Response::HTTP_OK);
+        $usersAmnt = $usersAll->count();
+
+        return  response()->json([
+            "meta" => [
+                "perPage" => 10,
+                "page" => $selectedPage,
+                "pagesQty" => ceil($usersAmnt / $perPage),
+                "totalRecords" => $usersAmnt,
+            ],
+            "records" => $users
+        ], Response::HTTP_OK);
     }
 
     public function listUser($id): JsonResponse
