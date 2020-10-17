@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers\Auth;
 
 use App\Notifications\ResetPasswordNotification;
@@ -9,19 +8,19 @@ use App\Validators\ResetPasswordValidator;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ResetPasswordController
 {
     public function sendPasswordByEmail(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required | email'
+            'email' => 'required | email',
         ]);
 
         if ($validator->fails()) {
@@ -39,12 +38,12 @@ class ResetPasswordController
                 DB::table(config('auth.passwords.users.table'))->insert([
                     'email' => $user->email,
                     'token' => $token,
-                    'created_at' => Carbon::now()
+                    'created_at' => Carbon::now(),
                 ]);
 
                 $details = [
                     'greeting' => 'Olá ' . $user->name,
-                    'body' => 'Sua nova senha do App Fala Marília é ' . $password . ' . ',
+                    'body' => 'Sua nova senha do App Fala Seropédica é ' . $password . ' . ',
                 ];
 
                 $user->notify(new ResetPasswordNotification($details));
@@ -56,7 +55,7 @@ class ResetPasswordController
         }
     }
 
-    function generatePassword($qtyCaraceters = 8): string
+    public function generatePassword($qtyCaraceters = 8): string
     {
         $smallLetters = str_shuffle('abcdefghijklmnopqrstuvwxyz');
 
