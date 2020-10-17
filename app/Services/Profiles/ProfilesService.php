@@ -3,10 +3,12 @@
 namespace App\Services\Profiles;
 
 use App\Repositories\Profiles\ProfilesRepositoryInterface;
+use App\Validators\ProfileValidator;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator as FacadesValidator;
 use Throwable;
 
 class ProfilesService
@@ -40,6 +42,16 @@ class ProfilesService
     public function update(int $id, Request $request): JsonResponse
     {
         try {
+            $validator = FacadesValidator::make(
+                $request->all(),
+                ProfileValidator::NEW_PACKAGE_RULE,
+                ProfileValidator::ERROR_MESSAGES
+            );
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
             $profile = $this->profilesRepository->update($id, $request);
             return response()->json($profile, Response::HTTP_OK);
         } catch (Exception $e) {

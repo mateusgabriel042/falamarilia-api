@@ -49,7 +49,7 @@ class ProfilesRepositoryEloquent implements ProfilesRepositoryInterface
 
         if ($request->password != null) {
             $user->update(
-                ['name' => $request->name, 'email' => $request->email, 'password' => Hash::make($request->password)],
+                ['name' => $request->name,'email' => $request->email, 'password' => Hash::make(str_replace(' ', '', $request->password))],
             );
         } else {
             $user->update(
