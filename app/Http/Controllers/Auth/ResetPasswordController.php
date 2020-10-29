@@ -43,7 +43,7 @@ class ResetPasswordController
 
                 $details = [
                     'greeting' => 'Olá ' . $user->name,
-                    'body' => 'Sua nova senha do App Fala Seropédica é ' . $password . ' . ',
+                    'body' => 'Sua nova senha do App Fala Marília é ' . $password . ' . ',
                 ];
 
                 $user->notify(new ResetPasswordNotification($details));
