@@ -26,6 +26,7 @@ class ResetPasswordNotification extends Notification
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
+            ->subject('Notificação de redefinição de senha - Fala Marília')
             ->greeting($this->details['greeting'])
             ->line($this->details['body']);
     }

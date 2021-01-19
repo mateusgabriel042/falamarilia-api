@@ -20,7 +20,7 @@ class ProfileValidator
         'name'           => 'required | string | max:255',
         'email'          => 'required | max:100 | email',
         'type'           => 'integer',
-        'password'       => 'required | string | min:6 | max:20 | confirmed',
+        'password'       => 'string | min:6 | max:20 | confirmed',
         'genre'          => 'required | string',
         'phone'          => 'required | celPhone',
         'cpf'            => 'required | cpf',

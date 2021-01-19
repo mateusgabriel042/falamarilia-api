@@ -24,6 +24,7 @@ $factory->define(Solicitation::class, function (Faker $faker) {
         'service_id' => 1,
         'user_id' => 1,
         'category_id' => 1,
+        'responsible' => 1,
         'status' => $status[array_rand($status, 1)],
         'description' => $faker->paragraph($nbSentences = 2, $variableNbSentences = true),
         'photo' => 'noImage',
